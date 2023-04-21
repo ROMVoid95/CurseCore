@@ -1,0 +1,75 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'de.erdbeerbaerlp.cfcore'
+version '1.0.3-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
+    testRuntimeOnly 'com.google.code.gson:gson:2.9.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.apache.commons:commons-text:1.9'
+    
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+}
+
+test {
+    useJUnitPlatform()
+
+    maxHeapSize = '1G'
+}
+
+tasks.withType(Test) { 
+	systemProperty 'cf.apikey', System.getProperty('cf.apikey', project.CURSE_API)
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+javadoc {
+    options.author()
+    options.encoding = 'UTF-8'
+    options.addBooleanOption('html5', true)
+    options.addBooleanOption('Xdoclint:none', true)
+    failOnError = false
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'de.erdbeerbaerlp'
+            artifactId = 'cfcore'
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            credentials {// $GRADLE_USER_HOME/gradle.properties
+                username = project.NEXUS_USER
+                password = project.NEXUS_PASSWORD
+            }
+            if(project.version.endsWith('-SNAPSHOT')) {
+                url = "https://repo.erdbeerbaerlp.de/repository/maven-snapshots"
+            }else{
+                url = "https://repo.erdbeerbaerlp.de/repository/maven-releases"
+            }
+        }
+    }
+}
+tasks.publish.dependsOn(tasks.build)
