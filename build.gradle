@@ -58,18 +58,5 @@ publishing {
             from components.java
         }
     }
-    repositories {
-        maven {
-            credentials {// $GRADLE_USER_HOME/gradle.properties
-                username = project.NEXUS_USER
-                password = project.NEXUS_PASSWORD
-            }
-            if(project.version.endsWith('-SNAPSHOT')) {
-                url = "https://repo.erdbeerbaerlp.de/repository/maven-snapshots"
-            }else{
-                url = "https://repo.erdbeerbaerlp.de/repository/maven-releases"
-            }
-        }
-    }
 }
 tasks.publish.dependsOn(tasks.build)
