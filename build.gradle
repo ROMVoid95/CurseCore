@@ -31,7 +31,7 @@ test {
 }
 
 tasks.withType(Test) { 
-	systemProperty 'cf.apikey', System.getProperty('cf.apikey', project.CURSE_API)
+	//systemProperty 'cf.apikey', System.getProperty('cf.apikey', project.CURSE_API)
 }
 
 java {
